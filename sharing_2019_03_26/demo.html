@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas></canvas>
+</body>
+<style>
+    canvas {
+        width: 400px;
+        height: 300px;
+        background: #2e2b3f;
+    }
+</style>
+<script>
+    const canvas = document.querySelector('canvas')
+    const ctx = canvas.getContext('2d')
+    const devicePixelRatio = window.devicePixelRatio || 1
+    const clientWidth = canvas.clientWidth
+    const clientHeight = canvas.clientHeight
+    canvas.width = clientWidth * devicePixelRatio
+    canvas.height = clientHeight * devicePixelRatio
+    ctx.scale(devicePixelRatio, devicePixelRatio)
+    ctx.lineCap = 'round'
+    // start draw
+    const r = 60
+    const c = [clientWidth / 2, clientHeight / 2]
+    const PI = Math.PI
+    const arc = 0.75
+    const lineWidth = 8
+    const duration = 60
+    const start = -PI / 2
+    let step = -1
+    let handle
+    frame()
+    function frame () {
+        if (++step < duration) {
+            const _arc = easeInOut(step, 0, arc, duration)
+            ctx.clearRect(0, 0, clientWidth, clientHeight)
+            ctx.lineWidth = lineWidth
+            ctx.beginPath()
+            ctx.arc(c[0], c[1], r, 0, PI * 2)
+            ctx.strokeStyle = '#475057'
+            ctx.stroke()
+            ctx.strokeStyle = '#b89fff'
+            ctx.beginPath()
+            ctx.arc(c[0], c[1], r, start, start + PI * 2 * _arc)
+            ctx.stroke()
+            ctx.font = '12px sans-serif'
+            ctx.fillStyle = '#b8b7c1'
+            ctx.textAlign = 'center'
+            ctx.fillText(Math.round(_arc * 100) + '%', c[0], c[1] + 6)
+            handle = requestAnimationFrame(frame)
+        } else {
+            cancelAnimationFrame(handle)
+        }
+    }
+
+    function easeInOut (t, b, c, d) {
+        if ((t /= d / 2) < 1) return c / 2 * t * t + b
+        return -c / 2 * ((--t) * (t - 2) - 1) + b
+    }
+</script>
+</html>
